@@ -1,53 +1,47 @@
 import tkinter as tk
 import pandas as pd
 from math import exp
+import matplotlib.pyplot as plt
 
 def calculate():
     result = ""
 
+    selected_columns = []
     if var1.get() == 1:
-        try:
-            value = df.loc[df['Temp'].notnull(), 'Temp'].iloc[0]
-            result_value = 19.071 * (1 - 1.3704 * exp(-0.0571 * value))
-            result += "Gross Photosynthetic Rate = {:.2f}\n".format(result_value)
-            # Break the loop after finding the first valid result
-            result_var.set(result)
-            return
-        except IndexError:
-            result = "Error: Invalid expression\n"
-
+        selected_columns.append('Temp')
     if var2.get() == 1:
-        try:
-            value = df.loc[df['CO2'].notnull(), 'CO2'].iloc[0]
-            result_value = 19.6385 * value / (401.9447 + value)
-            result += "Gross Photosynthetic Rate = {:.2f}\n".format(result_value)
-            # Break the loop after finding the first valid result
-            result_var.set(result)
-            return
-        except IndexError:
-            result = "Error: Invalid expression\n"
-
+        selected_columns.append('CO2')
     if var3.get() == 1:
-        try:
-            value = df.loc[df['PPF'].notnull(), 'PPF'].iloc[0]
-            result_value = 18.6884 * value / (338.672 + value)
-            result += "Gross Photosynthetic Rate = {:.2f}\n".format(result_value)
-            # Break the loop after finding the first valid result
-            result_var.set(result)
-            return
-        except IndexError:
-            result = "Error: Invalid expression\n"
-
+        selected_columns.append('PPF')
     if var4.get() == 1:
+        selected_columns.append('N')
+
+    for column in selected_columns:
         try:
-            value = df.loc[df['N'].notnull(), 'N'].iloc[0]
-            result_value = 24.747 * (1 + 6.085 * exp(-0.3689 * value))
-            result += "Gross Photosynthetic Rate = {:.2f}\n".format(result_value)
-            # Break the loop after finding the first valid result
-            result_var.set(result)
-            return
+            values = df.loc[df[column].notnull(), column]
+            result_values = []
+
+            if column == 'Temp':
+                result_values = 19.071 * (1 - 1.3704 * values.apply(lambda x: exp(-0.0571 * x)))
+            elif column == 'CO2':
+                result_values = 19.6385 * values / (401.9447 + values)
+            elif column == 'PPF':
+                result_values = 18.6884 * values / (338.672 + values)
+            elif column == 'N':
+                result_values = 24.747 * (1 + 6.085 * values.apply(lambda x: exp(-0.3689 * x)))
+
+            result += f"Gross Photosynthetic Rate for {column}:\n"
+
+            # Plotting the values
+            plt.plot(values, result_values, label=column)
+            plt.xlabel(column)
+            plt.ylabel('Gross Photosynthetic Rate')
+            plt.title(f"Gross Photosynthetic Rate vs. {column}")
+            plt.legend()
+            plt.show()
+
         except IndexError:
-            result = "Error: Invalid expression\n"
+            result += f"Error: Invalid expression for {column}\n"
 
     # Update the result variable
     result_var.set(result)
