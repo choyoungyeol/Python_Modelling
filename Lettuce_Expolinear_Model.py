@@ -65,14 +65,15 @@ def update_graph():
     ax2.set_ylabel('Dry weight (g/m2)', color='red')
 
     plt.grid(True)
-    # plt.legend()
     plt.show()
+
 
 def reset_values():
     # 초기화
     cm_label.config(text="Crop growth rate: {:.1f}".format(0.0))
     rm_label.config(text="Relative growth rate: {:.2f}".format(0.0))
     tb_label.config(text="tb: {:.1f}".format(0.0))
+
 
 # 윈도우 창 생성
 window = tk.Tk()
@@ -107,6 +108,10 @@ graph_button.pack(side=tk.LEFT, padx=5, pady=10)
 
 reset_button = tk.Button(button_frame, text="초기화", command=reset_values, font=("Arial", 12))
 reset_button.pack(side=tk.LEFT, padx=5, pady=10)
+
+# 종료 버튼
+close_button = tk.Button(window, text="닫기", command=window.destroy, font=("Arial", 12))
+close_button.pack(pady=10)
 
 # 윈도우 창 실행
 window.mainloop()
