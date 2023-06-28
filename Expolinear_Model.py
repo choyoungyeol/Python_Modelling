@@ -35,10 +35,10 @@ def update_graph():
 
 def reset_values():
     # 초기화
-    cm_var.set(0.1)
-    rm_var.set(0.01)
-    tb_var.set(1)
-    y_var.set(10)
+    cm_var.set(0.2)
+    rm_var.set(0.03)
+    tb_var.set(10)
+    y_var.set(100)
     result_var.set("")
 
 # 윈도우 창 생성
