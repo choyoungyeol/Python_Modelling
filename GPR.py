@@ -3,10 +3,12 @@ import pandas as pd
 from math import exp
 import matplotlib.pyplot as plt
 import numpy as np
-
+from tkinter import font as tkfont
+import matplotlib
 
 def calculate():
     result = ""
+    cumulative_values = []  # 누적 결과 값
 
     selected_columns = []
     if var1.get() == 1:
@@ -34,14 +36,22 @@ def calculate():
                     if None not in result_values:
                         if len(selected_columns) > 1:
                             plt.scatter(np.arange(len(result_values)), result_values, label="Calculated")
+                            cumulative_values = np.cumsum(result_values)  # 누적 결과 값 계산
                             result += f"Calculated: Based on {', '.join(selected_columns)}\n"
                         else:
                             plt.scatter(np.arange(len(result_values)), result_values, label="Calculated")
+                            cumulative_values = np.cumsum(result_values)  # 누적 결과 값 계산
                             result += f"{selected_columns[0]}: Calculated\n"
 
                         plt.xlabel('Counts')
                         plt.ylabel('Gross Photosynthetic Rate')
                         plt.title('Gross Photosynthetic Rate vs. Counts')
+
+                        # 누적 결과 값을 제2 y축에 표기
+                        ax2 = plt.twinx()
+                        ax2.plot(np.arange(len(result_values)), cumulative_values, color='red', label='Cumulative')
+                        ax2.set_ylabel('Cumulative Gross Photosynthetic Rate')
+
                         plt.legend()
                         plt.show()
                     else:
@@ -52,13 +62,10 @@ def calculate():
 
         except ValueError as e:
             result = str(e)  # Update the result with the error message
-
     else:
         result = "Error: Select at least one column for calculation\n"
-
     # Update the result variable
     result_var.set(result)
-
 
 def calculate_formula(values, columns):
     result_values = []
@@ -116,31 +123,41 @@ df = pd.read_excel('D:/Data/GPR_data.xlsx')
 # GUI 생성
 root = tk.Tk()
 root.title("Calculate")
+root.geometry("400x300")  # 윈도우 창 크기 설정
+
+# 폰트 설정
+font_name = tkfont.Font(family="Arial", size=12).actual()['family']
+matplotlib.rcParams['font.family'] = font_name
 
 # 체크박스 생성
 var1 = tk.IntVar()
-check1 = tk.Checkbutton(root, text="Temp", variable=var1)
+check1 = tk.Checkbutton(root, text="Temp", variable=var1, font=(font_name, 12))
 check1.pack()
 
 var2 = tk.IntVar()
-check2 = tk.Checkbutton(root, text="CO2", variable=var2)
+check2 = tk.Checkbutton(root, text="CO2", variable=var2, font=(font_name, 12))
 check2.pack()
 
 var3 = tk.IntVar()
-check3 = tk.Checkbutton(root, text="PPF", variable=var3)
+check3 = tk.Checkbutton(root, text="PPF", variable=var3, font=(font_name, 12))
 check3.pack()
 
 var4 = tk.IntVar()
-check4 = tk.Checkbutton(root, text="N", variable=var4)
+check4 = tk.Checkbutton(root, text="N", variable=var4, font=(font_name, 12))
 check4.pack()
 
 # 계산 버튼 생성
-calculate_button = tk.Button(root, text="Calculate", command=calculate)
+calculate_button = tk.Button(root, text="Calculate", command=calculate, font=(font_name, 12))
 calculate_button.pack()
 
 # 결과 텍스트 상자 생성
 result_var = tk.StringVar()
-result_label = tk.Label(root, textvariable=result_var)
+result_label = tk.Label(root, textvariable=result_var, font=(font_name, 12))
 result_label.pack()
 
+# 종료 버튼 생성
+close_button = tk.Button(root, text="Close", command=root.destroy, font=(font_name, 12))
+close_button.pack()
+
+# GUI 실행
 root.mainloop()
