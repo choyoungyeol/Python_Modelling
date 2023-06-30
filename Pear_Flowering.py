@@ -45,10 +45,10 @@ def update_temperature():
 
     # 기간에 해당하는 데이터 추출
     mask = (df['날짜'] >= start_date) & (df['날짜'] <= end_date)
-    filtered_df = df.loc[mask]
+    filtered_df = df.loc[mask].copy()
 
     # 데이터 프레임의 날짜 열을 datetime 형식으로 변환
-    filtered_df.loc[:, '날짜'] = pd.to_datetime(filtered_df['날짜'])
+    filtered_df['날짜'] = pd.to_datetime(filtered_df['날짜'])
 
     # 최저온도, 평균온도, 최고온도 추출
     min_temp = filtered_df['최저온도']
@@ -81,19 +81,19 @@ def update_temperature():
             anti_chill_day.append(filtered_df.loc[i, '평균온도'] - min_temp_value)
         elif 0 <= filtered_df.loc[i, '최저온도'] <= min_temp_value <= filtered_df.loc[i, '최고온도']:
             chill_day.append(-((filtered_df.loc[i, '평균온도'] - filtered_df.loc[i, '최저온도']) - (
-                        (filtered_df.loc[i, '최고온도'] - min_temp_value) / 2)))
+                    (filtered_df.loc[i, '최고온도'] - min_temp_value) / 2)))
             anti_chill_day.append((filtered_df.loc[i, '최고온도'] - min_temp_value) / 2)
         elif 0 <= filtered_df.loc[i, '최저온도'] <= filtered_df.loc[i, '최고온도'] <= min_temp_value:
             chill_day.append(-(filtered_df.loc[i, '평균온도'] - filtered_df.loc[i, '최저온도']))
             anti_chill_day.append(0)
         elif filtered_df.loc[i, '최저온도'] <= 0 < filtered_df.loc[i, '최고온도'] <= min_temp_value:
             chill_day.append(-(
-                        (filtered_df.loc[i, '최고온도'] / (filtered_df.loc[i, '최고온도'] - filtered_df.loc[i, '최저온도'])) * (
+                    (filtered_df.loc[i, '최고온도'] / (filtered_df.loc[i, '최고온도'] - filtered_df.loc[i, '최저온도'])) * (
                             filtered_df.loc[i, '최고온도'] / 2)))
             anti_chill_day.append(0)
         elif filtered_df.loc[i, '최저온도'] <= 0 <= min_temp_value <= filtered_df.loc[i, '최고온도']:
             chill_day.append(-(
-                        (filtered_df.loc[i, '최고온도'] / (filtered_df.loc[i, '최고온도'] - filtered_df.loc[i, '최저온도'])) * (
+                    (filtered_df.loc[i, '최고온도'] / (filtered_df.loc[i, '최고온도'] - filtered_df.loc[i, '최저온도'])) * (
                             filtered_df.loc[i, '최고온도'] / 2) - ((filtered_df.loc[i, '최고온도'] - min_temp_value) / 2)))
             anti_chill_day.append(-((filtered_df.loc[i, '최고온도'] - min_temp_value) / 2))
         # anti_chill_day가 flowering_temp보다 클 경우 설정 날짜 저장
@@ -104,10 +104,11 @@ def update_temperature():
             chill_day_dates.append(filtered_df.loc[i, '날짜'])
 
     # Anti Chill Days 출력 윈도우
-    anti_chill_day_label.config(text=f"Anti Chill Days: {sum(anti_chill_day)}\nDates: {', '.join(anti_chill_day_dates)}")
+    anti_chill_day_label.config(
+        text=f"Anti Chill Days: {sum(anti_chill_day)}\nDates: {', '.join(map(str, anti_chill_day_dates))}")
 
     # Chill Days 출력 윈도우
-    chill_day_label.config(text=f"Chill Days: {sum(chill_day)}\nDates: {', '.join(chill_day_dates)}")
+    chill_day_label.config(text=f"Chill Days: {sum(chill_day)}\nDates: {', '.join(map(str, chill_day_dates))}")
 
 
 # 메인 창 생성
@@ -191,4 +192,3 @@ update_button = ttk.Button(root, text="업데이트", command=update_temperature
 update_button.pack(pady=10)
 
 root.mainloop()
-
