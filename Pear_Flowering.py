@@ -59,6 +59,8 @@ def update_temperature():
     # 주요 온도 범위에 대한 계산식 적용
     chill_day = []
     anti_chill_day = []
+    anti_chill_day_dates = []
+    chill_day_dates = []
     for i in filtered_df.index:
         if 0 <= min_temp_value <= filtered_df.loc[i, '최저온도'] <= filtered_df.loc[i, '최고온도']:
             chill_day.append(0)
@@ -81,12 +83,21 @@ def update_temperature():
                             filtered_df.loc[i, '최고온도'] / 2) - ((filtered_df.loc[i, '최고온도'] - min_temp_value) / 2)))
             anti_chill_day.append(-((filtered_df.loc[i, '최고온도'] - min_temp_value) / 2))
 
-        # anti_chill_day가 flowering_temp보다 클 경우 설정 날짜 저장
-        if anti_chill_day[-1] > flowering_temp:
-            anti_chill_day_dates.append(filtered_df.loc[i, '날짜'])
-        # chill_day가 germination_temp보다 낮을 경우 설정 날짜 저장
-        if chill_day[-1] < germination_temp:
-            chill_day_dates.append(filtered_df.loc[i, '날짜'])
+        for i in filtered_df.index:
+            # ...
+            # anti_chill_day가 flowering_temp보다 클 경우 설정 날짜 저장
+            if len(anti_chill_day) > 0 and anti_chill_day[-1] > flowering_temp:
+                anti_chill_day_dates.append(filtered_df.loc[i, '날짜'])
+            # chill_day가 germination_temp보다 낮을 경우 설정 날짜 저장
+            if len(chill_day) > 0 and chill_day[-1] < germination_temp:
+                chill_day_dates.append(filtered_df.loc[i, '날짜'])
+
+        # Anti Chill Days 출력 윈도우
+        anti_chill_day_label.config(
+            text=f"Anti Chill Days: {sum(anti_chill_day)}\nDates: {', '.join(anti_chill_day_dates)}")
+
+        # Chill Days 출력 윈도우
+        chill_day_label.config(text=f"Chill Days: {sum(chill_day)}\nDates: {', '.join(chill_day_dates)}")
 
     plt.xlabel("Date")
     plt.ylabel("Temperature (oC)")
@@ -95,8 +106,7 @@ def update_temperature():
     plt.show()
 
     # Anti Chill Days 출력 윈도우
-    anti_chill_day_label.config(
-        text=f"Anti Chill Days: {sum(anti_chill_day)}\nDates: {', '.join(anti_chill_day_dates)}")
+    anti_chill_day_label.config(text=f"Anti Chill Days: {sum(anti_chill_day)}\nDates: {', '.join(anti_chill_day_dates)}")
 
     # Chill Days 출력 윈도우
     chill_day_label.config(text=f"Chill Days: {sum(chill_day)}\nDates: {', '.join(chill_day_dates)}")
@@ -133,6 +143,7 @@ end_date_button.grid(row=1, column=2, padx=5)
 # 설정 버튼
 set_button = ttk.Button(root, text="날짜 및 온도 설정", command=update_temperature)
 set_button.pack(pady=10)
+
 
 # Anti Chill Days 출력 윈도우
 anti_chill_day_label = ttk.Label(root, text="Anti Chill Days:")
