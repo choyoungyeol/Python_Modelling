@@ -34,7 +34,7 @@ def update_temperature():
     max_temp_value = 36.0
 
     # 발아일 예측온도
-    germination_temp = -86.4
+    germination_temp = -84.4
 
     # 만개기 적산온도
     flowering_temp = 231.3
@@ -46,10 +46,10 @@ def update_temperature():
     mask = (df['날짜'] >= start_date) & (df['날짜'] <= end_date)
     filtered_df = df.loc[mask]
 
-    # 최저온도, 적정온도, 최고온도 추출
-    min_temp = filtered_df['최저온도'].values
-    avg_temp = filtered_df['평균온도'].values
-    max_temp = filtered_df['최고온도'].values
+    # 최저온도, 평균온도, 최고온도 추출
+    min_temp = filtered_df['최저온도']
+    avg_temp = filtered_df['평균온도']
+    max_temp = filtered_df['최고온도']
 
     # 그래프 표시
     plt.plot(filtered_df['날짜'], min_temp, label="Min Temp")
@@ -57,33 +57,49 @@ def update_temperature():
     plt.plot(filtered_df['날짜'], max_temp, label="Max Temp")
 
     # 주요 온도 범위에 대한 계산식 적용
-    chill_day = [0] * len(min_temp)
-    anti_chill_day = [0] * len(min_temp)
-    for i in range(len(min_temp)):
-        if 0 <= min_temp_value <= min_temp[i] <= max_temp[i]:
-            anti_chill_day[i] = avg_temp[i] - min_temp_value
-        elif 0 <= min_temp[i] <= min_temp_value <= max_temp[i]:
-            chill_day[i] = - ((avg_temp[i] - min_temp[i]) - ((max_temp[i] - min_temp_value) / 2))
-            anti_chill_day[i] = (max_temp[i] - min_temp_value) / 2
-        elif 0 <= min_temp[i] <= max_temp[i] <= min_temp_value:
-            chill_day[i] = - (avg_temp[i] - min_temp[i])
-        elif min_temp[i] <= 0 < max_temp[i] <= min_temp_value:
-            chill_day[i] = - ((max_temp[i] / (max_temp[i] - min_temp[i])) * (max_temp[i] / 2))
-        elif min_temp[i] <= 0 <= min_temp_value <= max_temp[i]:
-            chill_day[i] = - ((max_temp[i] / (max_temp[i] - min_temp[i])) * (max_temp[i] / 2) - ((max_temp[i] - min_temp_value) / 2))
-            anti_chill_day[i] = - ((max_temp[i] - min_temp_value) / 2)
+    chill_day = []
+    anti_chill_day = []
+    for i in filtered_df.index:
+        if 0 <= min_temp_value <= filtered_df.loc[i, '최저온도'] <= filtered_df.loc[i, '최고온도']:
+            chill_day.append(0)
+            anti_chill_day.append(filtered_df.loc[i, '평균온도'] - min_temp_value)
+        elif 0 <= filtered_df.loc[i, '최저온도'] <= min_temp_value <= filtered_df.loc[i, '최고온도']:
+            chill_day.append(-((filtered_df.loc[i, '평균온도'] - filtered_df.loc[i, '최저온도']) - (
+                        (filtered_df.loc[i, '최고온도'] - min_temp_value) / 2)))
+            anti_chill_day.append((filtered_df.loc[i, '최고온도'] - min_temp_value) / 2)
+        elif 0 <= filtered_df.loc[i, '최저온도'] <= filtered_df.loc[i, '최고온도'] <= min_temp_value:
+            chill_day.append(-(filtered_df.loc[i, '평균온도'] - filtered_df.loc[i, '최저온도']))
+            anti_chill_day.append(0)
+        elif filtered_df.loc[i, '최저온도'] <= 0 < filtered_df.loc[i, '최고온도'] <= min_temp_value:
+            chill_day.append(-(
+                        (filtered_df.loc[i, '최고온도'] / (filtered_df.loc[i, '최고온도'] - filtered_df.loc[i, '최저온도'])) * (
+                            filtered_df.loc[i, '최고온도'] / 2)))
+            anti_chill_day.append(0)
+        elif filtered_df.loc[i, '최저온도'] <= 0 <= min_temp_value <= filtered_df.loc[i, '최고온도']:
+            chill_day.append(-(
+                        (filtered_df.loc[i, '최고온도'] / (filtered_df.loc[i, '최고온도'] - filtered_df.loc[i, '최저온도'])) * (
+                            filtered_df.loc[i, '최고온도'] / 2) - ((filtered_df.loc[i, '최고온도'] - min_temp_value) / 2)))
+            anti_chill_day.append(-((filtered_df.loc[i, '최고온도'] - min_temp_value) / 2))
 
-    # 수평선 추가
-    for day in chill_day:
-        plt.axhline(y=day, color='red', linestyle='--')
-    for day in anti_chill_day:
-        plt.axhline(y=day, color='blue', linestyle='--')
+        # anti_chill_day가 flowering_temp보다 클 경우 설정 날짜 저장
+        if anti_chill_day[-1] > flowering_temp:
+            anti_chill_day_dates.append(filtered_df.loc[i, '날짜'])
+        # chill_day가 germination_temp보다 낮을 경우 설정 날짜 저장
+        if chill_day[-1] < germination_temp:
+            chill_day_dates.append(filtered_df.loc[i, '날짜'])
 
     plt.xlabel("Date")
     plt.ylabel("Temperature (oC)")
     plt.title("Temperature during the Period")
     plt.legend()
     plt.show()
+
+    # Anti Chill Days 출력 윈도우
+    anti_chill_day_label.config(
+        text=f"Anti Chill Days: {sum(anti_chill_day)}\nDates: {', '.join(anti_chill_day_dates)}")
+
+    # Chill Days 출력 윈도우
+    chill_day_label.config(text=f"Chill Days: {sum(chill_day)}\nDates: {', '.join(chill_day_dates)}")
 
 
 # 메인 창 생성
@@ -117,5 +133,13 @@ end_date_button.grid(row=1, column=2, padx=5)
 # 설정 버튼
 set_button = ttk.Button(root, text="날짜 및 온도 설정", command=update_temperature)
 set_button.pack(pady=10)
+
+# Anti Chill Days 출력 윈도우
+anti_chill_day_label = ttk.Label(root, text="Anti Chill Days:")
+anti_chill_day_label.pack(pady=10)
+
+# Chill Days 출력 윈도우
+chill_day_label = ttk.Label(root, text="Chill Days:")
+chill_day_label.pack(pady=10)
 
 root.mainloop()
