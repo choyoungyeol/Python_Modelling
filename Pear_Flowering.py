@@ -3,8 +3,6 @@ from tkinter import ttk
 from tkcalendar import Calendar
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import pandas as pd
-import datetime
 
 def show_calendar(text_entry):
     def on_date_select():
@@ -236,5 +234,13 @@ chill_day_label.grid(row=1, column=0, padx=10)
 # 업데이트 버튼
 update_button = ttk.Button(root, text="업데이트", command=update_temperature)
 update_button.pack(pady=10)
+
+# 닫기 버튼 함수
+def close_window():
+    root.destroy()
+
+# 닫기 버튼
+close_button = ttk.Button(root, text="닫기", command=close_window)
+close_button.pack(pady=10)
 
 root.mainloop()
