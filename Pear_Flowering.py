@@ -4,6 +4,7 @@ from tkinter import ttk
 from tkcalendar import Calendar
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import datetime
 
 def show_calendar(text_entry):
     def on_date_select():
@@ -99,11 +100,12 @@ def update_temperature():
     flowering_dates = []
     chill_day_sum = 0  # chill_day_sum 초기화
     anti_chill_day_sum = 0  # anti_chill_day_sum 초기화
-    
     for i in range(len(chill_day)):  # chill_day 리스트의 길이만큼 반복
         chill_day_sum += chill_day[i]  # chill_day_sum 값을 누적
         if chill_day_sum <= germination_temp:
-            flowering_dates.append(filtered_df['날짜'].iloc[i])
+            anti_chill_day_sum += anti_chill_day[i]  # anti_chill_day_sum 값을 누적
+            if anti_chill_day_sum >= flowering_temp:
+                flowering_dates.append(filtered_df['날짜'].iloc[i])
 
     # Anti Chill Days 출력 윈도우
     anti_chill_day_label.config(text=f"Anti Chill Days: {sum(anti_chill_day)}")
@@ -114,9 +116,18 @@ def update_temperature():
     # 첫개화시기 출력
     if len(flowering_dates) > 0:
         first_flowering_date = flowering_dates[0]  # 첫번째 개화 시기를 가져옴
-        first_flowering_label.config(text=f"첫개화시기: {first_flowering_date}")
+        formatted_first_flowering_date = first_flowering_date.strftime("%Y-%m-%d")  # 원하는 포맷으로 날짜를 변환
+        first_flowering_label.config(text=f"첫개화시기: {formatted_first_flowering_date}")
     else:
         first_flowering_label.config(text="첫개화시기: 없음")
+
+    # 만개시기 출력
+    if len(flowering_dates) > 0:
+        last_flowering_date = flowering_dates[-1]  # 마지막 개화 시기를 가져옴
+        formatted_last_flowering_date = last_flowering_date.strftime("%Y-%m-%d")  # 원하는 포맷으로 날짜를 변환
+        last_flowering_label.config(text=f"만개시기: {formatted_last_flowering_date}")
+    else:
+        last_flowering_label.config(text="만개시기: 없음")
 
     # Anti Chill Days 출력 윈도우
     anti_chill_day_label.config(text=f"Anti Chill Days: {sum(anti_chill_day)}")
@@ -203,8 +214,14 @@ anti_chill_day_label.grid(row=0, column=0, padx=10)
 chill_day_label = ttk.Label(result_frame, text="Chill Days: ")
 chill_day_label.grid(row=1, column=0, padx=10)
 
-first_flowering_label = ttk.Label(result_frame, text="첫개화시기: ")
-first_flowering_label.grid(row=2, column=0, padx=10)
+# first_flowering_label = ttk.Label(result_frame, text="첫개화시기: ")
+# first_flowering_label.grid(row=2, column=0, padx=10)
+
+# 개화시기 출력 라벨
+first_flowering_label = tk.Label(root, text="첫개화시기: 없음")
+first_flowering_label.pack()
+last_flowering_label = tk.Label(root, text="만개시기: 없음")
+last_flowering_label.pack()
 
 
 # 업데이트 버튼
@@ -220,5 +237,3 @@ close_button = ttk.Button(root, text="닫기", command=close_window)
 close_button.pack(pady=10)
 
 root.mainloop()
-
-
