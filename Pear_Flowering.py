@@ -3,6 +3,7 @@ from tkinter import ttk
 from tkcalendar import Calendar
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import pandas as pd
 
 def show_calendar(text_entry):
     def on_date_select():
