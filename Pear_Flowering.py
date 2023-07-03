@@ -1,9 +1,9 @@
 import tkinter as tk
+import pandas as pd
 from tkinter import ttk
 from tkcalendar import Calendar
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-import pandas as pd
 
 def show_calendar(text_entry):
     def on_date_select():
@@ -73,6 +73,7 @@ def update_temperature():
     anti_chill_day = []
     anti_chill_day_dates = []
     chill_day_dates = []
+    flowering_dates = []
     for i in filtered_df.index:
         if 0 <= min_temp_value <= filtered_df.loc[i, '최저온도'] <= filtered_df.loc[i, '최고온도']:
             chill_day.append(0)
@@ -95,18 +96,27 @@ def update_temperature():
                             filtered_df.loc[i, '최고온도'] / 2) - ((filtered_df.loc[i, '최고온도'] - min_temp_value) / 2)))
             anti_chill_day.append(-((filtered_df.loc[i, '최고온도'] - min_temp_value) / 2))
 
+    flowering_dates = []
+    chill_day_sum = 0  # chill_day_sum 초기화
+    anti_chill_day_sum = 0  # anti_chill_day_sum 초기화
+    
+    for i in range(len(chill_day)):  # chill_day 리스트의 길이만큼 반복
+        chill_day_sum += chill_day[i]  # chill_day_sum 값을 누적
+        if chill_day_sum <= germination_temp:
+            flowering_dates.append(filtered_df['날짜'].iloc[i])
 
-        # 주요 온도 범위에 대한 계산식 적용
-        chill_day_dates = []
-        anti_chill_day_dates = []
-        flowering_dates = []
-        for i in filtered_df.index:
-            if filtered_df.loc[i, '최저온도'] < germination_temp:
-                flowering_dates.append(filtered_df.loc[i, '날짜'])
-            elif filtered_df.loc[i, '평균온도'] < germination_temp:
-                chill_day_dates.append(filtered_df.loc[i, '날짜'])
-            else:
-                anti_chill_day_dates.append(filtered_df.loc[i, '날짜'])
+    # Anti Chill Days 출력 윈도우
+    anti_chill_day_label.config(text=f"Anti Chill Days: {sum(anti_chill_day)}")
+
+    # Chill Days 출력 윈도우
+    chill_day_label.config(text=f"Chill Days: {sum(chill_day)}")
+
+    # 첫개화시기 출력
+    if len(flowering_dates) > 0:
+        first_flowering_date = flowering_dates[0]  # 첫번째 개화 시기를 가져옴
+        first_flowering_label.config(text=f"첫개화시기: {first_flowering_date}")
+    else:
+        first_flowering_label.config(text="첫개화시기: 없음")
 
     # Anti Chill Days 출력 윈도우
     anti_chill_day_label.config(text=f"Anti Chill Days: {sum(anti_chill_day)}")
@@ -116,45 +126,6 @@ def update_temperature():
     chill_day_label.config(text=f"Chill Days: {sum(chill_day)}")
     print(f"Chill Days: {sum(chill_day)}")
 
-    # 개화 상태 레이블
-    flowering_status_label = tk.Label(root, text="Flowering Status: ")
-    flowering_status_label.pack()
-
-    # 개화일 레이블
-    flowering_date_label = tk.Label(root, text="Flowering Date: ")
-    flowering_date_label.pack()
-
-    # 개화일 계산
-    flowering_date = None
-    for i in filtered_df.index:
-        if sum(chill_day[:i + 1]) < germination_temp:
-            flowering_date = filtered_df.loc[i, '날짜']
-            break
-
-    # 개화일 출력
-    flowering_status_label.config(text="Flowering Status: " + ("개화" if flowering_date else "개화하지 않음"))
-    flowering_date_label.config(text="Flowering Date: " + (str(flowering_date) if flowering_date else "-"))
-
-    # flowering_date 이후의 anti_chill_day 합계가 flowering_temp보다 큰 첫 번째 날짜를 저장할 변수
-    first_day_exceeding_flowering_temp = None
-
-    # flowering_date 이후의 anti_chill_day 적산값
-    accumulated_anti_chill_day = 0
-
-    # flowering_date 이후의 데이터를 탐색
-    if flowering_date in filtered_df.index:
-        flowering_date_index = filtered_df.index.get_loc(flowering_date)
-        for i in range(flowering_date_index, len(filtered_df)):
-            date = filtered_df.loc[i, '날짜']
-            temperature = filtered_df.loc[i, '온도']
-            accumulated_anti_chill_day += temperature - germination_temp
-
-            if accumulated_anti_chill_day > flowering_temp:
-                first_day_exceeding_flowering_temp = date
-                break
-
-    # 첫 번째로 flowering_temp를 넘은 날짜 출력
-    print("첫 번째로 flowering_temp를 넘은 날짜:", first_day_exceeding_flowering_temp)
 
 # 메인 창 생성
 root = tk.Tk()
@@ -232,6 +203,10 @@ anti_chill_day_label.grid(row=0, column=0, padx=10)
 chill_day_label = ttk.Label(result_frame, text="Chill Days: ")
 chill_day_label.grid(row=1, column=0, padx=10)
 
+first_flowering_label = ttk.Label(result_frame, text="첫개화시기: ")
+first_flowering_label.grid(row=2, column=0, padx=10)
+
+
 # 업데이트 버튼
 update_button = ttk.Button(root, text="업데이트", command=update_temperature)
 update_button.pack(pady=10)
@@ -245,3 +220,5 @@ close_button = ttk.Button(root, text="닫기", command=close_window)
 close_button.pack(pady=10)
 
 root.mainloop()
+
+
