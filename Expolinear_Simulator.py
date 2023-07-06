@@ -45,9 +45,9 @@ window.configure(bg="#F0F0F0")
 fig, ax = plt.subplots()
 y = simulate_graph(0.2, 0.03, 10)
 line, = ax.plot(x, y)
-ax.set_xlabel('Days after transplant (DAT)', fontsize=12)
-ax.set_ylabel('Dry weight (g/m2)', fontsize=12)
-ax.set_title('Graph', fontsize=14)
+ax.set_xlabel('Days after transplant (DAT)')
+ax.set_ylabel('Dry weight (g/m2)')
+ax.set_title('Graph')
 ax.set_ylim(0, np.max(y)*1.1)  # Set y-axis limit to 0 and max value of y
 ax.grid(True)
 
@@ -55,7 +55,7 @@ canvas = FigureCanvasTkAgg(fig, master=window)
 canvas.get_tk_widget().pack()
 
 # Crop growth rate input field
-cm_label = tk.Label(window, text="Crop growth rate", bg="#F0F0F0", font=("Arial", 12))
+cm_label = tk.Label(window, text="Crop growth rate (g/g/d)", bg="#F0F0F0", font=("Arial", 12))
 cm_label.pack()
 
 cm_var = tk.DoubleVar(value=0.2)
@@ -63,7 +63,7 @@ cm_scale = tk.Scale(window, variable=cm_var, from_=0.1, to=1, resolution=0.1, or
 cm_scale.pack()
 
 # Relative growth rate input field
-rm_label = tk.Label(window, text="Relative growth rate", bg="#F0F0F0", font=("Arial", 12))
+rm_label = tk.Label(window, text="Relative growth rate (g/g/d)", bg="#F0F0F0", font=("Arial", 12))
 rm_label.pack()
 
 rm_var = tk.DoubleVar(value=0.03)
@@ -71,22 +71,19 @@ rm_scale = tk.Scale(window, variable=rm_var, from_=0.01, to=0.1, resolution=0.01
 rm_scale.pack()
 
 # tb input field
-tb_label = tk.Label(window, text="tb", bg="#F0F0F0", font=("Arial", 12))
+tb_label = tk.Label(window, text="tb (d)", bg="#F0F0F0", font=("Arial", 12))
 tb_label.pack()
 
 tb_var = tk.DoubleVar(value=10)
-tb_scale = tk.Scale(window, variable=tb_var, from_=1, to=20, orient=tk.HORIZONTAL, length=200)
+tb_scale = tk.Scale(window, variable=tb_var, from_=1, to=30, orient=tk.HORIZONTAL, length=200)
 tb_scale.pack()
 
 # Weight input field
-y_label = tk.Label(window, text="Weight", bg="#F0F0F0", font=("Arial", 12))
+y_label = tk.Label(window, text="Harvest weight (g/m2)", bg="#F0F0F0", font=("Arial", 12))
 y_label.pack()
 
 y_var = tk.DoubleVar(value=8)
-y_scale = tk.Scale(window, variable=y_var, fromHere's the rest of the modified code:
-
-```python
-_=1, to=20, orient=tk.HORIZONTAL, length=200)
+y_scale = tk.Scale(window, variable=y_var, from_=1, to=20, orient=tk.HORIZONTAL, length=200)
 y_scale.pack()
 
 # Result text display
@@ -118,9 +115,9 @@ def animate_graph():
     y = simulate_graph(cm, rm, tb)
 
     ax.clear()
-    ax.set_xlabel('Days after transplant (DAT)', fontsize=12)
-    ax.set_ylabel('Dry weight (g/m2)', fontsize=12)
-    ax.set_title('Graph', fontsize=14)
+    ax.set_xlabel('Days after transplant (DAT)')
+    ax.set_ylabel('Dry weight (g/m2)')
+    ax.set_title('Graph')
     ax.set_ylim(0, np.max(y) * 1.1)  # Set y-axis limit to 0 and max value of y
     ax.grid(True)
 
@@ -144,9 +141,9 @@ def animate_graph():
     ax.clear()
     y_init = simulate_graph(cm_var.get(), rm_var.get(), tb_var.get())
     ax.plot(x, y_init)
-    ax.set_xlabel('Days after transplant (DAT)', fontsize=12)
-    ax.set_ylabel('Dry weight (g/m2)', fontsize=12)
-    ax.set_title('Graph', fontsize=14)
+    ax.set_xlabel('Days after transplant (DAT)')
+    ax.set_ylabel('Dry weight (g/m2)')
+    ax.set_title('Graph')
     ax.set_ylim(0, np.max(y_init) * 1.1)
     ax.grid(True)
     canvas.draw()
@@ -162,3 +159,4 @@ reset_button.pack(side=tk.LEFT, padx=5, pady=10)
 
 # Run the window
 window.mainloop()
+
