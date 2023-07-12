@@ -19,6 +19,7 @@ for filename in os.listdir(tipburn_folder):
         img = cv2.imread(os.path.join(tipburn_folder, filename))
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # 그레이스케일로 변환
         img = cv2.resize(img, (32, 32))  # 이미지 크기 조정
+        img = np.expand_dims(img, axis=2)  # 차원 확장
         tipburn_images.append(img)
 
         # 파일명에서 날짜 정보 추출
@@ -39,7 +40,6 @@ for filename in os.listdir(tipburn_folder):
 
         date_time_str = f"{year_str}-{month_str}-{day_str}_{hour_str}-{minute_str}-{second_str}"
         timestamp = datetime.strptime(date_time_str, "%Y-%m-%d_%H-%M-%S").date()
-
         tipburn_timestamps.append(timestamp)
 
 # Normal 데이터 로드 및 전처리
@@ -50,6 +50,7 @@ for filename in os.listdir(normal_folder):
         img = cv2.imread(os.path.join(normal_folder, filename))
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # 그레이스케일로 변환
         img = cv2.resize(img, (32, 32))  # 이미지 크기 조정
+        img = np.expand_dims(img, axis=2)  # 차원 확장
         normal_images.append(img)
 
         # 파일명에서 날짜 정보 추출
@@ -70,15 +71,11 @@ for filename in os.listdir(normal_folder):
 
         date_time_str = f"{year_str}-{month_str}-{day_str}_{hour_str}-{minute_str}-{second_str}"
         timestamp = datetime.strptime(date_time_str, "%Y-%m-%d_%H-%M-%S").date()
-
         normal_timestamps.append(timestamp)
 
 # Tipburn과 Normal 데이터를 합쳐서 X, y로 구성
 X = np.array(tipburn_images + normal_images)
 y = np.array([1] * len(tipburn_images) + [0] * len(normal_images))
-
-# 데이터 차원 조정
-X = np.expand_dims(X, axis=3)
 
 # 시간 순으로 데이터 정렬
 timestamps = np.array(tipburn_timestamps + normal_timestamps)
@@ -89,9 +86,13 @@ y = y[sorted_indices]
 # 데이터 분할: 훈련 데이터와 테스트 데이터로 나눔
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
+# 데이터 reshape
+X_train = X_train.reshape(X_train.shape[0], X_train.shape[1], X_train.shape[2])
+X_test = X_test.reshape(X_test.shape[0], X_test.shape[1], X_test.shape[2])
+
 # LSTM 모델 구축
 model = Sequential()
-model.add(LSTM(64, input_shape=(X.shape[1], X.shape[2])))
+model.add(LSTM(64, input_shape=(X_train.shape[1], X_train.shape[2])))
 model.add(Dense(1, activation='sigmoid'))
 
 # 모델 컴파일
@@ -117,7 +118,7 @@ import cv2
 import numpy as np
 
 # 입력 이미지 경로
-image_path = "D:/AI/Lettuce_Piumi/Lettuce/Tipburn/2023-04-24_12-10-10.jpg"
+image_path = "D:/AI/Lettuce_Piumi/Lettuce/Healthy/2023_04_24-13_43_37.jpg"
 
 # 이미지 로드
 img = cv2.imread(image_path)
@@ -127,7 +128,7 @@ if img is not None:
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # 그레이스케일로 변환
     img = cv2.resize(img, (32, 32))  # 이미지 크기 조정
     input_image = np.expand_dims(img, axis=0)  # 모델 입력 형태로 변환
-    input_image = np.expand_dims(input_image, axis=3)  # 차원을 추가하여 (1, 32, 32, 1)로 변환
+    input_image = np.expand_dims(input_image, axis=-1)  # 차원을 추가하여 (1, 32, 32, 1)로 변환
 
     # Tipburn 예측
     prediction = loaded_model.predict(input_image)
@@ -150,4 +151,5 @@ predicted_timestamp = timestamps[np.argmax(sequence_predictions)]  # 최댓값�
 
 print("Tipburn 예측 결과: {} (확률: {:.2f}%)".format(prediction_label, prediction_confidence * 100))
 print("Tipburn 발생 시점 예측: {} 시점".format(predicted_timestamp))
+
 
