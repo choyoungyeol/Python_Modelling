@@ -85,34 +85,28 @@ y = y[sorted_indices]
 # 데이터 분할: 훈련 데이터와 테스트 데이터로 나눔
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 
-# # 데이터 reshape
-# X_train = X_train.reshape(X_train.shape[0], X_train.shape[1], X_train.shape[2], 1)
-# X_test = X_test.reshape(X_test.shape[0], X_test.shape[1], X_test.shape[2], 1)
-#
-# # y_train과 y_test를 2차원으로 변환
-# # 주석으로 표시한 위치에 아래 코드 추가
-# # -------------------------------------
-# y_train = np.reshape(y_train, (-1, 1))
-# y_test = np.reshape(y_test, (-1, 1))
-# # -------------------------------------
-
-print("X_train의 차원:", X_train.ndim)
-print("X_test의 차원:", X_test.ndim)
-print("X_train의 모양:", X_train.shape)
-print("X_test의 모양:", X_test.shape)
-
 # 데이터 reshape
 X_train = X_train.reshape(X_train.shape[0], X_train.shape[1], X_train.shape[2], 1)
 X_test = X_test.reshape(X_test.shape[0], X_test.shape[1], X_test.shape[2], 1)
+
+from keras.layers.convolutional import Conv1D
+from keras.layers.pooling import MaxPooling1D
+from keras.layers import Reshape
+from keras.layers.convolutional import Conv2D
+from keras.layers import Reshape
 
 # LSTM 모델 구축
 model = Sequential()
 model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(X_train.shape[1], X_train.shape[2], 1)))
 model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Conv2D(64, (3, 3), activation='relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
 model.add(Flatten())
-model.add(RepeatVector(1))
+model.add(Dense(64 * 8 * 8, activation='relu'))  # 변경된 부분
+model.add(Reshape((8, 8 * 64)))
 model.add(LSTM(64))
 model.add(Dense(1, activation='sigmoid'))
+
 
 # 모델 컴파일
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -136,7 +130,7 @@ import cv2
 import numpy as np
 
 # 입력 이미지 경로
-image_path = "D:/AI/Lettuce_Piumi/Lettuce/Healthy/2023_04_24-13_43_37.jpg"
+image_path = "D:/AI/Lettuce_Piumi/Lettuce/Healthy/2023_04_24-14_05_38.jpg"
 
 # 이미지 로드
 img = cv2.imread(image_path)
@@ -153,7 +147,7 @@ if img is not None:
     prediction_label = "Tipburn 발생" if prediction[0][0] > 0.5 else "Tipburn 미발생"
     prediction_confidence = prediction[0][0] if prediction[0][0] > 0.5 else 1 - prediction[0][0]
 
-    print("Tipburn 예측 결과: {} (확률: {:.2f}%)".format(prediction_label, prediction_confidence * 100))
+    # print("Tipburn 예측 결과: {} (확률: {:.2f}%)".format(prediction_label, prediction_confidence * 100))
 else:
     print("이미지를 로드할 수 없습니다.")
 
