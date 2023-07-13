@@ -6,6 +6,25 @@ from keras.models import Sequential
 from keras.layers import LSTM, Dense, TimeDistributed, Flatten
 from keras.layers.convolutional import Conv2D, MaxPooling2D
 from sklearn.model_selection import train_test_split
+from keras.layers import Input
+
+import os
+import numpy as np
+import cv2
+from datetime import datetime
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.layers import Input
+from keras.layers import TimeDistributed
+from keras.layers import Flatten
+from keras.layers import MultiHeadAttention
+from keras.layers import Dropout
+from keras.layers import LayerNormalization
+from keras.layers import Add
+from keras.layers import Conv2D
+from keras.layers import MaxPooling2D
+from sklearn.model_selection import train_test_split
+
 
 # Tipburn 데이터 폴더 경로
 data_folder = "D:/AI/Lettuce_Piumi/Lettuce"
@@ -95,18 +114,17 @@ from keras.layers import Reshape
 from keras.layers.convolutional import Conv2D
 from keras.layers import Reshape
 
-# LSTM 모델 구축
-model = Sequential()
-model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(X_train.shape[1], X_train.shape[2], 1)))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Conv2D(64, (3, 3), activation='relu'))
-model.add(MaxPooling2D(pool_size=(2, 2)))
-model.add(Flatten())
-model.add(Dense(64 * 8 * 8, activation='relu'))  # 변경된 부분
-model.add(Reshape((8, 8 * 64)))
-model.add(LSTM(64))
-model.add(Dense(1, activation='sigmoid'))
-
+# # LSTM 모델 구축
+# model = Sequential()
+# model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(X_train.shape[1], X_train.shape[2], 1)))
+# model.add(MaxPooling2D(pool_size=(2, 2)))
+# model.add(Conv2D(64, (3, 3), activation='relu'))
+# model.add(MaxPooling2D(pool_size=(2, 2)))
+# model.add(Flatten())
+# model.add(Dense(64 * 8 * 8, activation='relu'))  # 변경된 부분
+# model.add(Reshape((8, 8 * 64)))
+# model.add(LSTM(64))
+# model.add(Dense(1, activation='sigmoid'))
 
 # 모델 컴파일
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
@@ -130,7 +148,7 @@ import cv2
 import numpy as np
 
 # 입력 이미지 경로
-image_path = "D:/AI/Lettuce_Piumi/Lettuce/Healthy/2023_04_24-14_05_38.jpg"
+image_path = "D:/AI/Lettuce_Piumi/Lettuce/Healthy/2023_04_25-14_55_01.jpg"
 
 # 이미지 로드
 img = cv2.imread(image_path)
