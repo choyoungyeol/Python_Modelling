@@ -8,11 +8,6 @@ from keras.layers.convolutional import Conv2D, MaxPooling2D
 from sklearn.model_selection import train_test_split
 from keras.layers import Input
 
-import os
-import numpy as np
-import cv2
-from datetime import datetime
-from keras.models import Sequential
 from keras.layers import Dense
 from keras.layers import Input
 from keras.layers import TimeDistributed
@@ -38,7 +33,7 @@ for filename in os.listdir(tipburn_folder):
     if filename.endswith(".jpg"):
         img = cv2.imread(os.path.join(tipburn_folder, filename))
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # 그레이스케일로 변환
-        img = cv2.resize(img, (32, 32))  # 이미지 크기 조정
+        img = cv2.resize(img, (32, 32))  # 이미지 크기 조정 (32x32)
         tipburn_images.append(img)
 
         # 파일명에서 날짜 정보 추출
@@ -68,7 +63,7 @@ for filename in os.listdir(normal_folder):
     if filename.endswith(".jpg"):
         img = cv2.imread(os.path.join(normal_folder, filename))
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)  # 그레이스케일로 변환
-        img = cv2.resize(img, (32, 32))  # 이미지 크기 조정
+        img = cv2.resize(img, (32, 32))  # 이미지 크기 조정 (32x32)
         normal_images.append(img)
 
         # 파일명에서 날짜 정보 추출
@@ -114,7 +109,20 @@ from keras.layers import Reshape
 from keras.layers.convolutional import Conv2D
 from keras.layers import Reshape
 
-# # LSTM 모델 구축
+# LSTM 모델 구축
+model = Sequential()
+model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(X_train.shape[1], X_train.shape[2], 1)))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Conv2D(64, (3, 3), activation='relu'))
+model.add(MaxPooling2D(pool_size=(2, 2)))
+model.add(Flatten())
+model.add(Dense(64 * 8 * 8, activation='relu'))  # 변경된 부분
+model.add(Reshape((8, 8 * 64)))
+model.add(LSTM(64))
+model.add(Dense(1, activation='sigmoid'))
+
+# from keras.layers import GRU
+# # StackedGRU 모델 구축
 # model = Sequential()
 # model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(X_train.shape[1], X_train.shape[2], 1)))
 # model.add(MaxPooling2D(pool_size=(2, 2)))
@@ -123,6 +131,21 @@ from keras.layers import Reshape
 # model.add(Flatten())
 # model.add(Dense(64 * 8 * 8, activation='relu'))  # 변경된 부분
 # model.add(Reshape((8, 8 * 64)))
+# model.add(GRU(64))
+# model.add(Dense(1, activation='sigmoid'))
+
+# from keras.layers import LSTM
+#
+# # StackedLSTM 모델 구축
+# model = Sequential()
+# model.add(Conv2D(32, (3, 3), activation='relu', input_shape=(X_train.shape[1], X_train.shape[2], 1)))
+# model.add(MaxPooling2D(pool_size=(2, 2)))
+# model.add(Conv2D(64, (3, 3), activation='relu'))
+# model.add(MaxPooling2D(pool_size=(2, 2)))
+# model.add(Flatten())
+# model.add(Dense(64 * 8 * 8, activation='relu'))  # 변경된 부분
+# model.add(Reshape((8, 8 * 64)))
+# model.add(LSTM(64, return_sequences=True))
 # model.add(LSTM(64))
 # model.add(Dense(1, activation='sigmoid'))
 
