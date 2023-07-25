@@ -86,10 +86,10 @@ for i in range(y.shape[1]):
     series = data[data.columns[i+1]]
     model = sm.tsa.ARIMA(series, order=(1, 0, 0))  # ARIMA(p, d, q) 모델로 설정
     model_fit = model.fit()  # 'disp' argument 제거
-    y_arima = model_fit.forecast(steps=7)  # 7일 동안의 예측
+    y_arima = model_fit.forecast(steps=168)  # 7일(24시간 * 7일) 동안의 예측
 
     # 예측 결과를 그래프에 추가
-    ax.plot(range(len(y_test) + len(y_additional), len(y_test) + len(y_additional) + 7), y_arima, label='ARIMA', linestyle='dashed', color='red')
+    ax.plot(range(len(y_test) + len(y_additional), len(y_test) + len(y_additional) + 168), y_arima, label='ARIMA', linestyle='dashed', color='red')
 
 # 그래프 표시
 plt.tight_layout()
