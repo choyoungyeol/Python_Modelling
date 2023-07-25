@@ -50,7 +50,7 @@ model.compile(optimizer="adam", loss="mse")
 early_stopping = EarlyStopping(patience=5, restore_best_weights=True)
 
 # 모델 훈련
-model.fit(X_train, y_train, epochs=10, batch_size=32, validation_split=0.1, callbacks=[early_stopping])
+model.fit(X_train, y_train, epochs=100, batch_size=32, validation_split=0.1, callbacks=[early_stopping])
 
 # 테스트 데이터로 예측
 y_pred = model.predict(X_test)
@@ -102,7 +102,7 @@ class WeatherPredictionWindow(QMainWindow):
         layout.addWidget(self.tabs)
 
     def plot_results(self, predictions, ground_truth, item, ax):
-        ax.plot(predictions.index, predictions[item], label="Estimated {}".format(item), color='green')
+        ax.plot(predictions.index, predictions[item], label="Estimated {}".format(item), color='red')
         ax.plot(ground_truth.index, ground_truth[item], label="Measured {}".format(item), color='blue')
         ax.set_title("{} Prediction".format(item))
         ax.legend()
@@ -126,16 +126,19 @@ y_pred_extended = model.predict(X_test)
 # 예측된 값을 원래 스케일로 변환
 y_pred_extended_rescaled = scaler.inverse_transform(y_pred_extended)
 
-# 2일 예측 데이터 생성
-next_day_date = data.index[-seq_length]
-date_list = pd.date_range(start=next_day_date, periods=2*24, freq="H")
-week_data_df = pd.DataFrame(columns=data.columns, index=date_list)
+# 1시간 이후의 예측 데이터 생성
+next_hour_date = data.index[-1] + pd.DateOffset(hours=1)
+date_list = pd.date_range(start=next_hour_date, periods=24, freq="H")
+week_data_df = pd.DataFrame(y_pred_extended_rescaled[-24:], columns=data.columns, index=date_list)
 
-# 예측된 값을 2일 데이터에 추가
-for i in range(2*24):
-    next_day_date += pd.DateOffset(hours=1)
-    next_day_predictions = pd.DataFrame([y_pred_extended_rescaled[i]], columns=data.columns, index=[next_day_date])
-    week_data_df.update(next_day_predictions)
+# 예측된 값을 1시간 이후의 데이터에 추가
+for i in range(24):
+    next_hour_date += pd.DateOffset(hours=1)
+    next_hour_predictions = pd.DataFrame([y_pred_extended_rescaled[i]], columns=data.columns, index=[next_hour_date])
+    week_data_df.update(next_hour_predictions)
+
+# 2일 예측 데이터를 "week_data_df.xlsx"로 저장
+week_data_df.to_excel("D:/Data/week_data.xlsx", index=True)
 
 # 결과 출력
 run_gui(predictions, ground_truth, week_data_df)
