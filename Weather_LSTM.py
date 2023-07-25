@@ -50,7 +50,7 @@ model.compile(optimizer="adam", loss="mse")
 early_stopping = EarlyStopping(patience=5, restore_best_weights=True)
 
 # 모델 훈련
-model.fit(X_train, y_train, epochs=100, batch_size=32, validation_split=0.1, callbacks=[early_stopping])
+model.fit(X_train, y_train, epochs=200, batch_size=32, validation_split=0.2, callbacks=[early_stopping])
 
 # 테스트 데이터로 예측
 y_pred = model.predict(X_test)
