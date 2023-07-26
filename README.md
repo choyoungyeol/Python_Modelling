@@ -1,4 +1,4 @@
 # Python_Modelling
 
 GS3_Node-RED.json
-![image](https://github.com/choyoungyeol/Python_Modelling/assets/60500365/01b7cd1f-c10d-4aaf-a153-40794a14c025)
+<img width="440" alt="image01" src="https://github.com/choyoungyeol/Python_Modelling/assets/60500365/7bcc6f97-8b8d-46f4-b167-a6cb49440259">
