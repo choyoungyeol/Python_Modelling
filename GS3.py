@@ -28,26 +28,35 @@ data = data.drop(columns='Channel')
 
 # 시각화 함수 (서서히 변화하는 그래프)
 def animate(i):
-    plt.cla()  # Clear the current plot
+    plt.clf()  # 현재 그래프를 지웁니다.
 
     plt.title('Sensor Data Visualization')
     plt.xlabel('Time')
     plt.ylabel('Value')
 
-    x = data['Date'][:i]  # Slice the data to show up to the current index
-    vwc_value = data['VWC'][:i]
-    temp_value = data['Temp'][:i]
-    ec_value = data['EC'][:i]
+    x = data['Date'][:i]  # 현재 인덱스까지의 데이터를 슬라이싱합니다.
 
-    plt.plot(x, vwc_value, 'g.-', label='VWC')
-    plt.plot(x, temp_value, 'b.-', label='Temp')
-    plt.plot(x, ec_value, 'm.-', label='EC')
+    # Plot VWC and Temp
+    line_vwc, = plt.plot(x, data['VWC'][:i], 'g.-', label='VWC')
+    line_temp, = plt.plot(x, data['Temp'][:i], 'b.-', label='Temp')
 
-    plt.legend()
+    # EC를 제2Y축으로 표시합니다.
+    ax2 = plt.twinx()
+    ax2.set_ylabel('EC Value', color='m')
+    line_ec, = ax2.plot(x, data['EC'][:i], 'm.-', label='EC')
+
+    # 범례를 표시합니다.
+    lines = [line_vwc, line_temp, line_ec]
+    labels = [line.get_label() for line in lines]
+    plt.legend(lines, labels)
+
     plt.xticks(rotation=45, ha='right')
 
-# Create the animation
-ani = FuncAnimation(plt.gcf(), animate, frames=len(data), interval=100, repeat=False)
-
+# 초기 그래프를 생성합니다.
+fig, ax = plt.subplots()
 plt.tight_layout()
+
+# 애니메이션을 생성합니다. (참고: 성능을 향상시키기 위해 blit=False로 설정합니다.)
+ani = FuncAnimation(fig, animate, frames=len(data), interval=100, repeat=False, blit=False)
+
 plt.show()
