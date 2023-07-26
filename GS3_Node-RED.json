@@ -1,0 +1,982 @@
+[
+    {
+        "id": "278324f5b7c1ec7f",
+        "type": "tab",
+        "label": "플로우 4",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "448f9741a16f3a16",
+        "type": "serial in",
+        "z": "278324f5b7c1ec7f",
+        "name": "",
+        "serial": "0ea2fcaaccbfa388",
+        "x": 190,
+        "y": 260,
+        "wires": [
+            [
+                "32eac8e0bcc1b39a"
+            ]
+        ]
+    },
+    {
+        "id": "2d2edfc18218a5a6",
+        "type": "json",
+        "z": "278324f5b7c1ec7f",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": true,
+        "x": 470,
+        "y": 260,
+        "wires": [
+            [
+                "efdc692735b821ff"
+            ]
+        ]
+    },
+    {
+        "id": "03b2f72313ec379f",
+        "type": "ui_gauge",
+        "z": "278324f5b7c1ec7f",
+        "name": "",
+        "group": "8c13c9913406fc3a",
+        "order": 1,
+        "width": 4,
+        "height": 3,
+        "gtype": "gage",
+        "title": "Channel",
+        "label": "",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "1",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "className": "",
+        "x": 940,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "138c20a98e410899",
+        "type": "ui_gauge",
+        "z": "278324f5b7c1ec7f",
+        "name": "",
+        "group": "8c13c9913406fc3a",
+        "order": 4,
+        "width": 7,
+        "height": 4,
+        "gtype": "wave",
+        "title": "VWC",
+        "label": "m3/m3",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "className": "",
+        "x": 930,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "32eac8e0bcc1b39a",
+        "type": "function",
+        "z": "278324f5b7c1ec7f",
+        "name": "",
+        "func": "var b=Buffer.from(msg.payload);\nvar s=b.toString();\nvar out=s;\nmsg.payload= out;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 340,
+        "y": 260,
+        "wires": [
+            [
+                "2d2edfc18218a5a6",
+                "64b7c29992891ad7",
+                "e27533074b4b5ab6"
+            ]
+        ]
+    },
+    {
+        "id": "dbc933921ee552f0",
+        "type": "switch",
+        "z": "278324f5b7c1ec7f",
+        "name": "",
+        "property": "parts.key",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "Channel",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "VWC",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "Temp",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "EC",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 4,
+        "x": 710,
+        "y": 260,
+        "wires": [
+            [
+                "03b2f72313ec379f"
+            ],
+            [
+                "138c20a98e410899",
+                "80bbc40187dc0ae5"
+            ],
+            [
+                "2ea7c5ceba1c9fb7",
+                "95936c556fdfd594"
+            ],
+            [
+                "7ac2af86f55a2b82",
+                "5e6658e8968663d6"
+            ]
+        ]
+    },
+    {
+        "id": "efdc692735b821ff",
+        "type": "split",
+        "z": "278324f5b7c1ec7f",
+        "name": "",
+        "splt": ",",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "",
+        "x": 590,
+        "y": 260,
+        "wires": [
+            [
+                "dbc933921ee552f0"
+            ]
+        ]
+    },
+    {
+        "id": "2ea7c5ceba1c9fb7",
+        "type": "ui_gauge",
+        "z": "278324f5b7c1ec7f",
+        "name": "",
+        "group": "8c13c9913406fc3a",
+        "order": 6,
+        "width": 7,
+        "height": 4,
+        "gtype": "gage",
+        "title": "Temperature",
+        "label": "oC",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "100",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "className": "",
+        "x": 950,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "7ac2af86f55a2b82",
+        "type": "ui_gauge",
+        "z": "278324f5b7c1ec7f",
+        "name": "",
+        "group": "8c13c9913406fc3a",
+        "order": 8,
+        "width": 7,
+        "height": 4,
+        "gtype": "gage",
+        "title": "EC",
+        "label": "uS/m",
+        "format": "{{value}}",
+        "min": 0,
+        "max": "10000",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "",
+        "seg2": "",
+        "className": "",
+        "x": 930,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "e27533074b4b5ab6",
+        "type": "ui_text",
+        "z": "278324f5b7c1ec7f",
+        "group": "8c13c9913406fc3a",
+        "order": 40,
+        "width": 22,
+        "height": 1,
+        "name": "",
+        "label": "",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 550,
+        "y": 140,
+        "wires": []
+    },
+    {
+        "id": "fc9b8994463b81dd",
+        "type": "ui_text",
+        "z": "278324f5b7c1ec7f",
+        "group": "8c13c9913406fc3a",
+        "order": 2,
+        "width": 7,
+        "height": 1,
+        "name": "",
+        "label": "Root-zone Environment",
+        "format": "{{msg.payload}}",
+        "layout": "row-spread",
+        "className": "",
+        "x": 290,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "95936c556fdfd594",
+        "type": "ui_chart",
+        "z": "278324f5b7c1ec7f",
+        "name": "",
+        "group": "8c13c9913406fc3a",
+        "order": 24,
+        "width": 8,
+        "height": 5,
+        "label": "Temperature",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 950,
+        "y": 280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5e6658e8968663d6",
+        "type": "ui_chart",
+        "z": "278324f5b7c1ec7f",
+        "name": "",
+        "group": "8c13c9913406fc3a",
+        "order": 26,
+        "width": 8,
+        "height": 5,
+        "label": "EC",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 930,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "80bbc40187dc0ae5",
+        "type": "ui_chart",
+        "z": "278324f5b7c1ec7f",
+        "name": "",
+        "group": "8c13c9913406fc3a",
+        "order": 22,
+        "width": 8,
+        "height": 5,
+        "label": "VWC",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 930,
+        "y": 180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "64b7c29992891ad7",
+        "type": "function",
+        "z": "278324f5b7c1ec7f",
+        "name": "replace char",
+        "func": "// 데이터 전처리를 위해 새로운 변수 선언 및 초기화\nvar processedPayload = msg.payload;\n\n// \":\"를 \",\"로 대체 (모든 \":\"을 한 번에 바꾸도록 정규식 사용)\nprocessedPayload = processedPayload.replace(/:/g, ',');\n\n// \"{\"와 \"}\" 제거\nprocessedPayload = processedPayload.replace(/{|}/g, '');\n\n// 원하는 문자열 제거\nprocessedPayload = processedPayload.replace(/\"Channel\",|\"VWC\",|\"Temp\",|\"EC\",/g, '');\n\n// 현재 날짜 정보 얻기\nvar newDate = new Date();\nvar year = newDate.getFullYear().toString().slice(-2); // 년도의 마지막 두 자리만 가져오기\nvar month = ('0' + (newDate.getMonth() + 1)).slice(-2); // 월이 0부터 시작하므로 1을 더하고 두 자리로 맞추기\nvar day = ('0' + newDate.getDate()).slice(-2); // 일이 10일 미만일 경우 앞에 0을 붙여 두 자리로 맞추기\n\n// 현재 날짜에 해당하는 시간 정보 설정 (00:00:00으로 고정)\nvar time = ('0' + newDate.getHours()).slice(-2) + ':' + ('0' + newDate.getMinutes()).slice(-2) + ':' + ('0' + newDate.getSeconds()).slice(-2);\n\n// 날짜, 시간 정보와 데이터를 합쳐서 최종 결과 생성\nvar finalPayload = year + \"-\" + month + \"-\" + day + \" \" + time + \",\" + processedPayload;\n\n// 최종 결과를 msg.payload에 할당\nmsg.payload = finalPayload;\n\nreturn msg;\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 550,
+        "y": 420,
+        "wires": [
+            [
+                "9206d6b8c2f80c55"
+            ]
+        ]
+    },
+    {
+        "id": "9206d6b8c2f80c55",
+        "type": "file",
+        "z": "278324f5b7c1ec7f",
+        "name": "",
+        "filename": "D:/Data/GS3.csv",
+        "appendNewline": false,
+        "createDir": true,
+        "overwriteFile": "false",
+        "encoding": "none",
+        "x": 970,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "9a2ddf71150a59bc",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "9d3fa480aef39384",
+        "order": 2,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "9fbd316aac81d381",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "9d3fa480aef39384",
+        "order": 5,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "c2ffe9a82584e79d",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "9d3fa480aef39384",
+        "order": 8,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "9910269472af8bc2",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "9d3fa480aef39384",
+        "order": 11,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "88935430b4e4889d",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "9d3fa480aef39384",
+        "order": 14,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "435aebb81c09509a",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "9d3fa480aef39384",
+        "order": 17,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "77471b738c2da272",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "9d3fa480aef39384",
+        "order": 20,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "233638081a1ac31e",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "4d2eb5d9f450a3c9",
+        "order": 2,
+        "width": 3,
+        "height": 1
+    },
+    {
+        "id": "7ccb56bdaf8adb9e",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "4d2eb5d9f450a3c9",
+        "order": 18,
+        "width": 11,
+        "height": 1
+    },
+    {
+        "id": "6c20a42fe860a82f",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "4d2eb5d9f450a3c9",
+        "order": 19,
+        "width": 11,
+        "height": 1
+    },
+    {
+        "id": "29249286a4024a51",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "4d2eb5d9f450a3c9",
+        "order": 20,
+        "width": 11,
+        "height": 1
+    },
+    {
+        "id": "662ce2799f81cd3e",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "4d2eb5d9f450a3c9",
+        "order": 21,
+        "width": 11,
+        "height": 1
+    },
+    {
+        "id": "49586347efcf39e9",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "5cabb239e50705dc",
+        "order": 16,
+        "width": 11,
+        "height": 1
+    },
+    {
+        "id": "18cf800d7a1e8fcd",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "5cabb239e50705dc",
+        "order": 17,
+        "width": 11,
+        "height": 1
+    },
+    {
+        "id": "c50bf142a2261bb6",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "5cabb239e50705dc",
+        "order": 18,
+        "width": 11,
+        "height": 1
+    },
+    {
+        "id": "0725e2df733ba190",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "5cabb239e50705dc",
+        "order": 19,
+        "width": 11,
+        "height": 1
+    },
+    {
+        "id": "dacc6ab0e3b51b02",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 3,
+        "width": 19,
+        "height": 1
+    },
+    {
+        "id": "5a491f02a762a881",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 5,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "c4a3741e792a0228",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 7,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "c5f6b98aa70b9f2b",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 9,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "4793e9a2349f254e",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 10,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "bc61f8576fda5c69",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 11,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "b88ae8e26cb2f83b",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 12,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "8a843a6d5d3f87c1",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 13,
+        "width": 4,
+        "height": 1
+    },
+    {
+        "id": "7976319b333209fc",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 14,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "4abc490f634b829b",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 15,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "d1e786e62f559670",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 16,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "c22241c531f57b42",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 17,
+        "width": 4,
+        "height": 1
+    },
+    {
+        "id": "6749c153db4aabc3",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 18,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "3d3ed3d9b97a5c45",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 19,
+        "width": 2,
+        "height": 1
+    },
+    {
+        "id": "974797e44c949ba2",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 20,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "cc9583618695bca7",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 21,
+        "width": 4,
+        "height": 1
+    },
+    {
+        "id": "4d66345687d84379",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 23,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "519e50fc84286418",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 25,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "e1d15c84ac7968d5",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 27,
+        "width": 4,
+        "height": 1
+    },
+    {
+        "id": "51c9b71df8dbd0e7",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 28,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "bb524651e4afe5eb",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 29,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "393e81654e2a788f",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 30,
+        "width": 4,
+        "height": 1
+    },
+    {
+        "id": "4146a9f6464fb4ba",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 31,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "73537cc24813a993",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 32,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "29652f6ecd945de7",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 33,
+        "width": 4,
+        "height": 1
+    },
+    {
+        "id": "9319f86c0554f32e",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 34,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "b0b5b6d454d919bc",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 35,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "263ca6675acef307",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 36,
+        "width": 4,
+        "height": 1
+    },
+    {
+        "id": "228b23292902bef3",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 37,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "3c8b35787f0d4884",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 38,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "9d937434ee55517a",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 39,
+        "width": 4,
+        "height": 1
+    },
+    {
+        "id": "90706fdfc32be97f",
+        "type": "ui_spacer",
+        "z": "278324f5b7c1ec7f",
+        "name": "spacer",
+        "group": "8c13c9913406fc3a",
+        "order": 41,
+        "width": 4,
+        "height": 1
+    },
+    {
+        "id": "0ea2fcaaccbfa388",
+        "type": "serial-port",
+        "serialport": "COM3",
+        "serialbaud": "9600",
+        "databits": "8",
+        "parity": "none",
+        "stopbits": "1",
+        "waitfor": "",
+        "dtr": "none",
+        "rts": "none",
+        "cts": "none",
+        "dsr": "none",
+        "newline": "\\n",
+        "bin": "false",
+        "out": "char",
+        "addchar": "",
+        "responsetimeout": "10000"
+    },
+    {
+        "id": "8c13c9913406fc3a",
+        "type": "ui_group",
+        "name": "GS3",
+        "tab": "883e931fd283f634",
+        "order": 1,
+        "disp": true,
+        "width": 30,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "4d2eb5d9f450a3c9",
+        "type": "ui_group",
+        "name": "Farm",
+        "tab": "",
+        "order": 1,
+        "disp": true,
+        "width": 22,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "5cabb239e50705dc",
+        "type": "ui_group",
+        "name": "Lab",
+        "tab": "",
+        "order": 1,
+        "disp": true,
+        "width": 22,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "883e931fd283f634",
+        "type": "ui_tab",
+        "name": "GS3",
+        "icon": "dashboard",
+        "order": 7,
+        "disabled": false,
+        "hidden": false
+    }
+]
