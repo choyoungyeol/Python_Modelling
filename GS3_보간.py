@@ -1,7 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 from matplotlib.animation import FuncAnimation
-import re
 import numpy as np
 
 # 엑셀 파일에서 데이터를 읽어옵니다.
@@ -19,15 +18,17 @@ data['Date'] = pd.to_datetime(data['Date'], errors='coerce')
 # Remove rows with NaT values in the 'Date' column
 data.dropna(subset=['Date'], inplace=True)
 
-# 데이터프레임의 값을 모두 실수형으로 변환합니다.
-data = data.apply(pd.to_numeric, errors='coerce')
+# 'VWC', 'Temp', 'EC' 열을 실수형으로 변환합니다.
+data['VWC'] = pd.to_numeric(data['VWC'], errors='coerce')
+data['Temp'] = pd.to_numeric(data['Temp'], errors='coerce')
+data['EC'] = pd.to_numeric(data['EC'], errors='coerce')
 
 # 빈 칸을 보간하여 데이터를 채웁니다. (보간은 VWC, Temp, EC 열에만 적용됩니다.)
-data['VWC'].interpolate(inplace=True)
-data['Temp'].interpolate(inplace=True)
-data['EC'].interpolate(inplace=True)
+data['VWC'].interpolate(method='linear', inplace=True)
+data['Temp'].interpolate(method='linear', inplace=True)
+data['EC'].interpolate(method='linear', inplace=True)
 
-
+# 전 데이터와 후 데이터의 평균값으로 보간하는 방법을 적용합니다.
 # 전전데이터, 전데이터와의 평균, 이후데이터와의 평균으로 보간하는 방법을 적용합니다.
 def interpolate_with_mean_or_previous(row):
     for i in range(2, 5):
@@ -73,14 +74,12 @@ def interpolate_with_mean_or_previous(row):
                 row[i] = np.nan
     return row
 
-
 # Apply the interpolation function to the entire dataset
 data = data.apply(interpolate_with_mean_or_previous, axis=1)
 
 # Save the interpolated data to a new file
 interpolated_file_path = 'D:/Data/GS3_interpolated.xlsx'
 data.to_excel(interpolated_file_path, index=False)
-
 
 # 시각화 함수 (서서히 변화하는 그래프)
 def animate(i):
